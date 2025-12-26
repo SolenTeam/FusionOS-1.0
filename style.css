@@ -1,26 +1,78 @@
-/* ===========================
-   Stile generale
-=========================== */
+/* =========================================================
+   NAMIXOS — STYLE.CSS (D3: DARK + LIGHT THEME)
+   Modern visual polish + full compatibility with your HTML
+   ========================================================= */
 
+/* ------------------------------
+   ROOT VARIABLES (THEME SYSTEM)
+------------------------------ */
+:root {
+  --bg: #1a1a1a;
+  --bg-soft: #222;
+  --bg-window: #2b2b2b;
+  --bg-titlebar: #333;
+  --bg-hover: #3a3a3a;
+
+  --text: #ffffff;
+  --text-soft: #cccccc;
+
+  --accent: #00ffc8;
+  --accent-soft: #00cfa0;
+
+  --border: #444;
+  --shadow: 0 0 25px rgba(0, 0, 0, 0.45);
+
+  --radius: 10px;
+  --transition: 0.25s ease;
+}
+
+/* LIGHT THEME */
+.light-theme {
+  --bg: #f2f2f2;
+  --bg-soft: #ffffff;
+  --bg-window: #ffffff;
+  --bg-titlebar: #e6e6e6;
+  --bg-hover: #dcdcdc;
+
+  --text: #222;
+  --text-soft: #555;
+
+  --accent: #007aff;
+  --accent-soft: #005fcc;
+
+  --border: #cccccc;
+  --shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ------------------------------
+   GLOBAL
+------------------------------ */
 body {
   margin: 0;
-  background: #1a1a1a;
+  background: var(--bg);
+  color: var(--text);
   font-family: system-ui, sans-serif;
-  color: white;
+  overflow: hidden;
+  transition: background var(--transition), color var(--transition);
+}
+
+#os {
+  width: 100%;
+  height: 100vh;
+  position: relative;
   overflow: hidden;
 }
 
-/* ===========================
-   Desktop
-=========================== */
-
+/* ------------------------------
+   DESKTOP ICONS
+------------------------------ */
 #desktop {
   position: absolute;
   inset: 0;
-  display: flex;
-  gap: 20px;
   padding: 20px;
+  display: flex;
   flex-wrap: wrap;
+  gap: 20px;
   align-content: flex-start;
 }
 
@@ -29,76 +81,199 @@ body {
   text-align: center;
   cursor: pointer;
   user-select: none;
+  transition: transform var(--transition), opacity var(--transition);
 }
 
-.icon img {
-  width: 48px;
-  height: 48px;
+.icon:hover {
+  transform: scale(1.08);
+  opacity: 0.9;
 }
 
-.icon span {
-  display: block;
+.icon-image {
+  font-size: 42px;
+}
+
+.icon-label {
   margin-top: 6px;
   font-size: 14px;
+  color: var(--text-soft);
 }
 
-/* ===========================
-   Finestre
-=========================== */
-
+/* ------------------------------
+   WINDOWS
+------------------------------ */
 .window {
   position: absolute;
-  top: 120px;
-  left: 120px;
-  width: 350px;
-  background: #2b2b2b;
-  border: 1px solid #444;
-  border-radius: 6px;
-  box-shadow: 0 0 20px #0008;
+  width: 380px;
+  background: var(--bg-window);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: none;
+  animation: windowFadeIn 0.25s ease;
+  overflow: hidden;
 }
 
-.window-header {
-  background: #3a3a3a;
-  padding: 8px;
-  cursor: grab;
+@keyframes windowFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.window.active {
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.55);
+}
+
+/* TITLEBAR */
+.window-titlebar {
+  background: var(--bg-titlebar);
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 6px 6px 0 0;
+  cursor: grab;
+  color: var(--text);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
 }
 
-.window-title {
-  font-weight: bold;
-}
-
-.win-close {
-  background: #ff4b4b;
+.window-buttons button {
+  background: var(--bg-hover);
   border: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   cursor: pointer;
+  color: var(--text);
+  font-size: 14px;
+  transition: background var(--transition);
 }
 
-/* ===========================
-   Contenuto finestra
-=========================== */
+.window-buttons button:hover {
+  background: var(--accent-soft);
+}
 
+/* CONTENT */
 .window-content {
-  padding: 10px;
-  max-height: 300px;
+  padding: 12px;
+  color: var(--text);
   overflow-y: auto;
+  max-height: calc(100vh - 120px);
 }
 
-/* ===========================
-   Terminale
-=========================== */
+/* FULLSCREEN MODE */
+.window.fullscreen {
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+}
 
-#terminal {
-  background: black;
+/* ------------------------------
+   NOTES
+------------------------------ */
+.notes-area {
+  width: 100%;
+  height: 300px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 10px;
+  resize: none;
+  outline: none;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ------------------------------
+   BROWSER
+------------------------------ */
+.browser-bar {
+  width: 100%;
+  padding: 8px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.browser-view {
+  background: var(--bg-soft);
+  padding: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+/* ------------------------------
+   FILE MANAGER
+------------------------------ */
+.file-manager {
+  display: flex;
+  height: 100%;
+}
+
+.fm-sidebar {
+  width: 140px;
+  background: var(--bg-soft);
+  border-right: 1px solid var(--border);
+  padding: 10px;
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.fm-section-title {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.fm-nav-item {
+  width: 100%;
+  padding: 6px;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: var(--radius);
+  color: var(--text);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.fm-nav-item:hover {
+  background: var(--accent-soft);
+}
+
+.fm-main {
+  flex: 1;
+  padding: 10px;
+}
+
+.fm-toolbar {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.fm-list .fm-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 80px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.fm-row:hover {
+  background: var(--bg-hover);
+}
+
+/* ------------------------------
+   TERMINAL
+------------------------------ */
+.terminal {
+  background: #000;
   color: #00ff00;
   font-family: monospace;
-  height: 250px;
+  height: 350px;
   display: flex;
   flex-direction: column;
 }
@@ -110,102 +285,288 @@ body {
 }
 
 #terminal-input {
+  background: #111;
   border: none;
   outline: none;
   padding: 10px;
-  background: #111;
   color: #0f0;
   font-family: monospace;
 }
 
-/* ===========================
-   File Manager
-=========================== */
-
-.file-list {
-  list-style: none;
-  padding: 0;
-}
-
-.file-list li {
-  padding: 6px;
-  border-bottom: 1px solid #444;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* ===========================
-   Notes
-=========================== */
-
-#notes-area {
-  width: 100%;
-  height: 250px;
-  background: #222;
-  color: white;
-  border: none;
-  padding: 10px;
-  resize: none;
-}
-
-/* ===========================
-   Splash screen
-=========================== */
-
-#splash-screen {
-  position: fixed;
-  inset: 0;
-  background: black;
+/* ------------------------------
+   MUSIC PLAYER
+------------------------------ */
+.music-player {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  gap: 12px;
+}
+
+.music-info {
+  display: flex;
+  gap: 12px;
   align-items: center;
-  color: white;
-  font-size: 32px;
-  animation: fadeIn 0.4s ease;
 }
 
-.splash-loading {
-  margin-top: 20px;
-  width: 60px;
-  height: 6px;
-  background: #333;
-  border-radius: 3px;
-  overflow: hidden;
-  position: relative;
+.music-cover {
+  font-size: 48px;
 }
 
-.splash-loading::after {
-  content: "";
+.music-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-music {
+  background: var(--bg-hover);
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--transition);
+}
+
+.btn-music:hover {
+  background: var(--accent-soft);
+}
+
+/* ------------------------------
+   DOCK
+------------------------------ */
+#dock {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-soft);
+  padding: 8px 14px;
+  border-radius: 20px;
+  display: flex;
+  gap: 16px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.dock-item {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.dock-item:hover {
+  transform: scale(1.15);
+  opacity: 0.85;
+}
+
+.dock-item span {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ------------------------------
+   TASKBAR
+------------------------------ */
+#taskbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38px;
+  background: var(--bg-soft);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+#start-button {
+  background: var(--bg-hover);
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+#start-button:hover {
+  background: var(--accent-soft);
+}
+
+.taskbar-item {
+  background: var(--bg-hover);
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.taskbar-item.active {
+  background: var(--accent-soft);
+}
+
+/* ------------------------------
+   START MENU
+------------------------------ */
+#start-menu {
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  width: 240px;
+  background: var(--bg-window);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  display: none;
+}
+
+#start-menu.open {
+  display: block;
+}
+
+.start-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.start-apps button,
+.start-power {
+  width: 100%;
+  padding: 8px;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: var(--radius);
+  color: var(--text);
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.start-apps button:hover,
+.start-power:hover {
+  background: var(--accent-soft);
+}
+
+/* ------------------------------
+   SPLASH SCREEN
+------------------------------ */
+#splash {
   position: absolute;
   inset: 0;
-  width: 30px;
-  background: white;
-  animation: load 1s infinite;
-}
-
-@keyframes load {
-  0% { transform: translateX(-30px); }
-  100% { transform: translateX(60px); }
-}
-
-.fade-out {
+  background: var(--bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: var(--text);
   opacity: 0;
-  transition: opacity 0.6s;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
 }
 
-/* ===========================
-   Standby / Shutdown
-=========================== */
+#splash.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-#shutdown-screen,
-#reboot-screen,
-#standby-screen {
-  position: fixed;
+.splash-title {
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.splash-powered {
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+.splash-beta {
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.5;
+}
+
+/* ------------------------------
+   BLACK SCREEN (STANDBY / REBOOT)
+------------------------------ */
+#black-screen {
+  position: absolute;
   inset: 0;
   background: black;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
+  color: white;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#black-screen.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.black-title {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.black-icon {
+  font-size: 48px;
+  opacity: 0.8;
+}
+
+/* ------------------------------
+   STANDBY OVERLAY
+------------------------------ */
+#standby-message {
+  position: absolute;
+  inset: 0;
+  background: black;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+#standby-message.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.standby-text {
+  font-size: 18px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ------------------------------
+   MOBILE RESPONSIVE
+------------------------------ */
+@media (max-width: 700px) {
+  .window {
+    width: 100vw !important;
+    height: 100vh !important;
+    top: 0 !important;
+    left: 0 !important;
+    border-radius: 0 !important;
+  }
+
+  #dock {
+    bottom: 60px;
+  }
+
+  #taskbar {
+    height: 46px;
+  }
 }
