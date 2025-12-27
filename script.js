@@ -15,7 +15,7 @@ const blackScreen = document.getElementById("black-screen");
 const blackIcon = document.getElementById("black-icon");
 const standbyOverlay = document.getElementById("standby-message");
 
-let zIndexCounter = 10;
+let zIndexCounter = 500;
 let isInStandby = false;
 
 /* ===========================
@@ -169,6 +169,7 @@ function playSplash(callback) {
 =========================== */
 function showBlack(icon, duration, callback) {
   blackIcon.textContent = icon;
+  blackScreen.querySelector(".black-title").textContent = "NamixOS";
   blackScreen.style.display = "flex";
   blackScreen.classList.add("visible");
 
@@ -180,11 +181,9 @@ function showBlack(icon, duration, callback) {
 }
 
 function enterStandby() {
-  if (!confirm("Enter standby mode?")) return;
-
   windows.forEach(w => w.style.display = "none");
 
-  showBlack("⏸", 2000, () => {
+  showBlack("⏸", 1500, () => {
     standbyOverlay.style.display = "flex";
     standbyOverlay.classList.add("visible");
     isInStandby = true;
@@ -198,17 +197,15 @@ function wakeFromStandby() {
   standbyOverlay.style.display = "none";
   isInStandby = false;
 
-  showBlack("⏸", 2000, () => playSplash(() => {}));
+  showBlack("⏸", 1500, () => playSplash(() => {}));
 }
 
 standbyOverlay.addEventListener("click", wakeFromStandby);
 
 function enterReboot() {
-  if (!confirm("Restart the system?")) return;
-
   windows.forEach(w => w.style.display = "none");
 
-  showBlack("🔄", 2000, () => playSplash(() => {}));
+  showBlack("🔄", 1500, () => playSplash(() => {}));
 }
 
 startPowerButtons.forEach(btn => {
