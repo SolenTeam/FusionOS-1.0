@@ -7,7 +7,7 @@
 }
 
 body {
-  background: #0d0d0d;
+  background: #000;
   font-family: Arial, sans-serif;
   overflow: hidden;
   color: white;
@@ -138,23 +138,29 @@ body {
   gap: 35px;
   align-content: flex-start;
   justify-content: center;
+  background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
 }
 
+/* Desktop icons */
 .icon {
-  width: 90px;
-  height: 90px;
-  font-size: 55px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 70px;
+  text-align: center;
   cursor: pointer;
-  transition: transform 0.15s ease;
 }
 
-.icon:hover {
-  transform: scale(1.1);
+.icon-image {
+  font-size: 36px;
+}
+
+.icon-label {
+  margin-top: 4px;
+  font-size: 13px;
+  color: white;
+}
+
+/* locked browser icon */
+.locked-browser .icon-image {
+  filter: grayscale(0.3);
 }
 
 /* ===== DOCK ===== */
@@ -163,19 +169,36 @@ body {
   bottom: 110px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(30, 30, 30, 0.7);
-  padding: 14px 26px;
+  background: rgba(30, 30, 30, 0.85);
+  padding: 10px 20px;
   border-radius: 26px;
   display: flex;
-  gap: 28px;
+  align-items: center;
+  gap: 12px;
   z-index: 300;
   backdrop-filter: blur(12px);
 }
 
-.dock-item {
+.dock-main,
+.dock-recent {
+  display: flex;
+  gap: 18px;
+  align-items: flex-end;
+}
+
+#dock-divider {
+  width: 1px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.2);
+  display: none; /* becomes flex when there are recent apps */
+}
+
+.dock-item,
+.dock-recent-item {
+  position: relative;
   background: none;
   border: none;
-  font-size: 48px;
+  font-size: 34px;
   cursor: pointer;
   color: white;
   padding: 0;
@@ -183,8 +206,21 @@ body {
   transition: transform 0.15s ease;
 }
 
-.dock-item:hover {
-  transform: scale(1.15);
+.dock-item:hover,
+.dock-recent-item:hover {
+  transform: scale(1.1);
+}
+
+/* green dot under running apps */
+.dock-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0f8;
+  transform: translateX(-50%);
 }
 
 /* ===== TASKBAR ===== */
@@ -235,7 +271,7 @@ body {
   position: fixed;
   bottom: 42px;
   left: 12px;
-  width: 230px;
+  width: 260px;
   background: #222;
   border-radius: 10px;
   padding: 12px;
@@ -268,7 +304,29 @@ body {
   border: none;
   border-radius: 8px;
   color: white;
-  font-size: 28px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.start-power-section {
+  border-top: 1px solid #444;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.start-power-title {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.start-power {
+  width: 100%;
+  background: #333;
+  border: none;
+  color: white;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -323,15 +381,98 @@ body {
   overflow: auto;
 }
 
-/* Notes */
-.notes-area {
-  width: 100%;
+/* Notes app */
+.notes-app {
+  display: flex;
   height: 100%;
+  gap: 10px;
+}
+
+.notes-sidebar {
+  width: 130px;
   background: #111;
-  color: white;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#btn-new-note {
+  background: #2c7;
   border: none;
-  padding: 10px;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #000;
+  font-size: 13px;
+}
+
+#notes-list {
+  list-style: none;
+  margin-top: 6px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+#notes-list li {
+  padding: 5px 6px;
+  background: #222;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#notes-list li.active {
+  background: #0f8;
+  color: #000;
+}
+
+.notes-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#note-title {
+  padding: 6px;
+  background: #111;
+  border: none;
+  color: white;
+}
+
+#note-body {
+  flex: 1;
+  padding: 6px;
+  background: #111;
+  border: none;
+  color: white;
   resize: none;
+}
+
+.notes-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.notes-actions button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+#btn-delete-note {
+  background: #c33;
+  color: white;
+}
+
+#btn-download-note {
+  background: #3498db;
+  color: white;
 }
 
 /* Browser */
@@ -373,49 +514,14 @@ body {
   padding: 12px;
 }
 
-.fm-list {
-  margin-top: 12px;
-}
-
-/* Music */
-.music-info {
+.fm-toolbar {
   display: flex;
-  gap: 12px;
+  gap: 6px;
   align-items: center;
 }
 
-.music-cover {
-  font-size: 48px;
-}
-
-.music-controls {
-  margin-top: 20px;
-  display: flex;
-  gap: 22px;
-  justify-content: center;
-}
-
-.btn-music {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 26px;
-  cursor: pointer;
-}
-
-.music-progress {
-  width: 100%;
-  height: 6px;
-  background: #444;
-  margin-top: 20px;
-  border-radius: 3px;
-}
-
-.music-progress-bar {
-  width: 0%;
-  height: 100%;
-  background: #0f8;
-  border-radius: 3px;
+.fm-list {
+  margin-top: 12px;
 }
 
 /* Terminal */
@@ -446,4 +552,103 @@ body {
   border: none;
   padding: 6px;
   font-family: monospace;
+}
+
+/* Settings */
+.settings {
+  display: flex;
+  height: 100%;
+}
+
+.settings-sidebar {
+  width: 140px;
+  background: #111;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-tab {
+  background: #222;
+  border: none;
+  padding: 10px;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+  text-align: left;
+}
+
+.settings-main {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+}
+
+.settings-page {
+  display: none;
+}
+
+.settings-page.active {
+  display: block;
+}
+
+#wallpaper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.wallpaper-thumb {
+  width: 100%;
+  height: 70px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid transparent;
+}
+
+.wallpaper-thumb:hover {
+  border-color: #0f8;
+}
+
+/* Context menu */
+#context-menu {
+  position: fixed;
+  background: #222;
+  border-radius: 6px;
+  padding: 6px 0;
+  display: none;
+  flex-direction: column;
+  z-index: 9999;
+  min-width: 170px;
+}
+
+.ctx-item {
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.ctx-item:hover {
+  background: #333;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 700px) {
+  .window {
+    width: 90vw;
+    height: 70vh;
+  }
+
+  #desktop {
+    padding: 20px;
+    gap: 25px;
+  }
 }
