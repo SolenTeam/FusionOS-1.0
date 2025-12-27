@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NamixOS</title>
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 
 <body>
@@ -14,12 +14,14 @@
     <div id="splash">
       <div class="splash-content">
         <div class="splash-title">NamixOS</div>
-        <div class="splash-powered">Powered by <span class="splash-engine">SOLEN</span></div>
+        <div class="splash-powered">
+          Powered by <span class="splash-engine">SOLEN</span>
+        </div>
         <div class="splash-beta">BETA</div>
       </div>
     </div>
 
-    <!-- Black overlay -->
+    <!-- Black overlay (reboot / standby) -->
     <div id="black-screen">
       <div class="black-content">
         <div class="black-title">NamixOS</div>
@@ -37,24 +39,62 @@
     <!-- Desktop -->
     <div id="desktop">
 
-      <div class="icon" data-window="win-browser">🌐</div>
-      <div class="icon" data-window="win-files">📁</div>
-      <div class="icon" data-window="win-terminal">>_</div>
-      <div class="icon" data-window="win-music">🎵</div>
-      <div class="icon" data-window="win-notes">📝</div>
+      <!-- Notes -->
+      <div class="icon" data-window="win-notes">
+        <div class="icon-image">📝</div>
+        <div class="icon-label">Notes</div>
+      </div>
+
+      <!-- Locked browser: ONLY icon, cannot open -->
+      <div class="icon locked-browser">
+        <div class="icon-image">🔒</div>
+        <div class="icon-label">Browser</div>
+      </div>
+
+      <!-- Files -->
+      <div class="icon" data-window="win-files">
+        <div class="icon-image">🗂️</div>
+        <div class="icon-label">Files</div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="icon" data-window="win-terminal">
+        <div class="icon-image">&gt;_</div>
+        <div class="icon-label">Terminal</div>
+      </div>
+
+      <!-- About -->
+      <div class="icon" data-window="win-about">
+        <div class="icon-image">OS</div>
+        <div class="icon-label">About</div>
+      </div>
+
+      <!-- Settings -->
+      <div class="icon" data-window="win-settings">
+        <div class="icon-image">⚙️</div>
+        <div class="icon-label">Settings</div>
+      </div>
 
     </div>
 
     <!-- Dock -->
     <div id="dock">
-      <button class="dock-item" data-window="win-browser">🌐</button>
-      <button class="dock-item" data-window="win-files">📁</button>
-      <button class="dock-item" data-window="win-terminal">>_</button>
+      <div class="dock-main">
+        <button class="dock-item" data-window="win-browser" data-app-id="browser">🌐</button>
+        <button class="dock-item" data-window="win-files" data-app-id="files">🗂️</button>
+        <button class="dock-item" data-window="win-terminal" data-app-id="terminal">&gt;_</button>
+      </div>
+
+      <div id="dock-divider"></div>
+
+      <div class="dock-recent" id="dock-recent">
+        <!-- up to 2 recently used app icons added dynamically -->
+      </div>
     </div>
 
     <!-- Taskbar -->
     <div id="taskbar">
-      <div id="start-button">🪟</div>
+      <div id="start-button">🔌</div>
       <div id="taskbar-apps"></div>
       <div id="clock"></div>
     </div>
@@ -65,10 +105,11 @@
 
       <div class="start-apps">
         <button class="start-app" data-window="win-browser">🌐</button>
-        <button class="start-app" data-window="win-files">📁</button>
-        <button class="start-app" data-window="win-terminal">>_</button>
-        <button class="start-app" data-window="win-music">🎵</button>
+        <button class="start-app" data-window="win-files">🗂️</button>
+        <button class="start-app" data-window="win-terminal">&gt;_</button>
         <button class="start-app" data-window="win-notes">📝</button>
+        <button class="start-app" data-window="win-about">OS</button>
+        <button class="start-app" data-window="win-settings">⚙️</button>
       </div>
 
       <div class="start-power-section">
@@ -78,9 +119,16 @@
       </div>
     </div>
 
+    <!-- Context menu -->
+    <div id="context-menu">
+      <button class="ctx-item" data-action="close">—  Close application</button>
+      <button class="ctx-item" data-action="open">&lt;&gt;  Open application</button>
+      <button class="ctx-item" data-action="hide">&gt;&lt;  Hide</button>
+    </div>
+
     <!-- WINDOWS -->
 
-    <!-- Notes -->
+    <!-- Notes window -->
     <div class="window" id="win-notes">
       <div class="window-titlebar">
         <span class="window-title">Notes</span>
@@ -90,12 +138,23 @@
           <button class="btn-close">×</button>
         </div>
       </div>
-      <div class="window-content">
-        <textarea class="notes-area" placeholder="Write your notes here..."></textarea>
+      <div class="window-content notes-app">
+        <div class="notes-sidebar">
+          <button id="btn-new-note">+ New note</button>
+          <ul id="notes-list"></ul>
+        </div>
+        <div class="notes-main">
+          <input type="text" id="note-title" placeholder="Title" />
+          <textarea id="note-body" placeholder="Write your note here..."></textarea>
+          <div class="notes-actions">
+            <button id="btn-delete-note">Delete</button>
+            <button id="btn-download-note">Download</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Browser -->
+    <!-- Browser window (only via dock/start) -->
     <div class="window" id="win-browser">
       <div class="window-titlebar">
         <span class="window-title">Mini Browser</span>
@@ -106,7 +165,7 @@
         </div>
       </div>
       <div class="window-content browser">
-        <input type="text" class="browser-url" placeholder="fake address... (no real navigation)">
+        <input type="text" class="browser-url" placeholder="fake address... (no real navigation)" />
         <div class="browser-view">
           <h3>Welcome to NamixOS</h3>
           <p>This is a demo web OS running entirely in your browser.</p>
@@ -140,43 +199,6 @@
       </div>
     </div>
 
-    <!-- Music -->
-    <div class="window" id="win-music">
-      <div class="window-titlebar">
-        <span class="window-title">Music Player</span>
-        <div class="window-buttons">
-          <button class="btn-minimize">_</button>
-          <button class="btn-fullscreen">□</button>
-          <button class="btn-close">×</button>
-        </div>
-      </div>
-      <div class="window-content music">
-        <div class="music-info">
-          <div class="music-cover">🎵</div>
-          <div>
-            <div class="music-title">Demo Track</div>
-            <div class="music-artist">Virtual Artist</div>
-          </div>
-        </div>
-
-        <div class="music-controls">
-          <button class="btn-music">⏮</button>
-          <button class="btn-music btn-play">⏯</button>
-          <button class="btn-music">⏭</button>
-        </div>
-
-        <div class="music-timeline">
-          <div class="music-progress">
-            <div class="music-progress-bar"></div>
-          </div>
-          <div class="music-time">
-            <span class="time-current">00:00</span>
-            <span class="time-total">03:30</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Terminal -->
     <div class="window" id="win-terminal">
       <div class="window-titlebar">
@@ -196,10 +218,65 @@
       </div>
     </div>
 
+    <!-- About -->
+    <div class="window" id="win-about">
+      <div class="window-titlebar">
+        <span class="window-title">About NamixOS</span>
+        <div class="window-buttons">
+          <button class="btn-minimize">_</button>
+          <button class="btn-fullscreen">□</button>
+          <button class="btn-close">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <h2>NamixOS</h2>
+        <p>Demo web OS.</p>
+        <p>Powered by SOLEN.</p>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="window" id="win-settings">
+      <div class="window-titlebar">
+        <span class="window-title">Settings</span>
+        <div class="window-buttons">
+          <button class="btn-minimize">_</button>
+          <button class="btn-fullscreen">□</button>
+          <button class="btn-close">×</button>
+        </div>
+      </div>
+
+      <div class="window-content settings">
+        <div class="settings-sidebar">
+          <button class="settings-tab" data-tab="lang">Language</button>
+          <button class="settings-tab" data-tab="general">Settings</button>
+          <button class="settings-tab" data-tab="wallpapers">Wallpapers</button>
+        </div>
+
+        <div class="settings-main">
+          <div class="settings-page" id="settings-lang">
+            <h2>Language</h2>
+            <p>Current language: English</p>
+            <p>(More languages coming soon)</p>
+          </div>
+
+          <div class="settings-page" id="settings-general">
+            <h2>General Settings</h2>
+            <p>Space reserved for future system options.</p>
+          </div>
+
+          <div class="settings-page" id="settings-wallpapers">
+            <h2>Wallpapers</h2>
+            <p>Tap a wallpaper to apply it to the desktop.</p>
+            <div id="wallpaper-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <script src="apps.js?v=3" defer></script>
-  <script src="script.js?v=3" defer></script>
-
+  <script src="apps.js?v=10" defer></script>
+  <script src="script.js?v=10" defer></script>
 </body>
 </html>
