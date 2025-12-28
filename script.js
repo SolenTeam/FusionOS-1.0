@@ -465,13 +465,20 @@ function attachContextMenuHandlers(element, meta) {
   });
 
   // mobile: long press
-  let touchTimer = null;
-  element.addEventListener("touchstart", e => {
-    touchTimer = setTimeout(() => {
-      const touch = e.touches[0];
+  let lastTapTime = 0;
+
+element.addEventListener("touchstart", e => {
+  const now = Date.now();
+  const delta = now - lastTapTime;
+  lastTapTime = now;
+
+  if (delta < 400) {
+    const touch = e.touches[0];
+    if (canShowMenu(element)) {
       showContextMenu(touch.clientX, touch.clientY, meta);
-    }, 600);
-  });
+    }
+  }
+});
 
   element.addEventListener("touchend", () => {
     clearTimeout(touchTimer);
