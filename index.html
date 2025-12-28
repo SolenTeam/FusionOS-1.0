@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NamixOS</title>
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=30" />
 </head>
 
 <body>
@@ -45,9 +45,9 @@
         <div class="icon-label">Notes</div>
       </div>
 
-      <!-- Locked browser: ONLY icon, cannot open -->
-      <div class="icon locked-browser">
-        <div class="icon-image">🔒</div>
+      <!-- Browser (vero) -->
+      <div class="icon" data-window="win-browser">
+        <div class="icon-image">🌐</div>
         <div class="icon-label">Browser</div>
       </div>
 
@@ -55,7 +55,7 @@
       <div class="icon" data-window="win-files">
         <div class="icon-image">🗂️</div>
         <div class="icon-label">Files</div>
-      </div>
+     div>
 
       <!-- Terminal -->
       <div class="icon" data-window="win-terminal">
@@ -77,24 +77,23 @@
 
     </div>
 
-    <!-- Dock -->
+    <!-- Dock: fixed apps + divider + recent apps -->
     <div id="dock">
       <div class="dock-main">
         <button class="dock-item" data-window="win-browser" data-app-id="browser">🌐</button>
         <button class="dock-item" data-window="win-files" data-app-id="files">🗂️</button>
         <button class="dock-item" data-window="win-terminal" data-app-id="terminal">&gt;_</button>
+        <button class="dock-item" data-window="win-settings" data-app-id="settings">⚙️</button>
       </div>
 
       <div id="dock-divider"></div>
 
-      <div class="dock-recent" id="dock-recent">
-        <!-- up to 2 recently used app icons added dynamically -->
-      </div>
+      <div class="dock-recent" id="dock-recent"></div>
     </div>
 
     <!-- Taskbar -->
     <div id="taskbar">
-      <div id="start-button">🔌</div>
+      <div id="start-button">🪟</div>
       <div id="taskbar-apps"></div>
       <div id="clock"></div>
     </div>
@@ -104,12 +103,12 @@
       <div class="start-title">NamixOS</div>
 
       <div class="start-apps">
-        <button class="start-app" data-window="win-browser">🌐</button>
-        <button class="start-app" data-window="win-files">🗂️</button>
-        <button class="start-app" data-window="win-terminal">&gt;_</button>
-        <button class="start-app" data-window="win-notes">📝</button>
-        <button class="start-app" data-window="win-about">OS</button>
-        <button class="start-app" data-window="win-settings">⚙️</button>
+        <button class="start-app" data-window="win-browser" data-app-id="browser">🌐</button>
+        <button class="start-app" data-window="win-files" data-app-id="files">🗂️</button>
+        <button class="start-app" data-window="win-terminal" data-app-id="terminal">&gt;_</button>
+        <button class="start-app" data-window="win-notes" data-app-id="notes">📝</button>
+        <button class="start-app" data-window="win-about" data-app-id="about">OS</button>
+        <button class="start-app" data-window="win-settings" data-app-id="settings">⚙️</button>
       </div>
 
       <div class="start-power-section">
@@ -119,17 +118,17 @@
       </div>
     </div>
 
-    <!-- Context menu -->
+    <!-- Context menu (unico, riusato ovunque) -->
     <div id="context-menu">
-      <button class="ctx-item" data-action="close">—  Close application</button>
-      <button class="ctx-item" data-action="open">&lt;&gt;  Open application</button>
-      <button class="ctx-item" data-action="hide">&gt;&lt;  Hide</button>
+      <button class="ctx-btn" data-action="open">▶️</button>
+      <button class="ctx-btn" data-action="hide">➖</button>
+      <button class="ctx-btn" data-action="close">✖️</button>
     </div>
 
     <!-- WINDOWS -->
 
-    <!-- Notes window -->
-    <div class="window" id="win-notes">
+    <!-- Notes -->
+    <div class="window" id="win-notes" data-app-id="notes">
       <div class="window-titlebar">
         <span class="window-title">Notes</span>
         <div class="window-buttons">
@@ -138,26 +137,15 @@
           <button class="btn-close">×</button>
         </div>
       </div>
-      <div class="window-content notes-app">
-        <div class="notes-sidebar">
-          <button id="btn-new-note">+ New note</button>
-          <ul id="notes-list"></ul>
-        </div>
-        <div class="notes-main">
-          <input type="text" id="note-title" placeholder="Title" />
-          <textarea id="note-body" placeholder="Write your note here..."></textarea>
-          <div class="notes-actions">
-            <button id="btn-delete-note">Delete</button>
-            <button id="btn-download-note">Download</button>
-          </div>
-        </div>
+      <div class="window-content">
+        <textarea class="notes-area" placeholder="Write your notes here..."></textarea>
       </div>
     </div>
 
-    <!-- Browser window (only via dock/start) -->
-    <div class="window" id="win-browser">
+    <!-- Browser (DuckDuckGo search) -->
+    <div class="window" id="win-browser" data-app-id="browser">
       <div class="window-titlebar">
-        <span class="window-title">Mini Browser</span>
+        <span class="window-title">Browser</span>
         <div class="window-buttons">
           <button class="btn-minimize">_</button>
           <button class="btn-fullscreen">□</button>
@@ -165,16 +153,17 @@
         </div>
       </div>
       <div class="window-content browser">
-        <input type="text" class="browser-url" placeholder="fake address... (no real navigation)" />
+        <input type="text" class="browser-url"
+               placeholder="Type a search and press Enter (DuckDuckGo API)" />
         <div class="browser-view">
           <h3>Welcome to NamixOS</h3>
-          <p>This is a demo web OS running entirely in your browser.</p>
+          <p>Use the bar above to search the web using DuckDuckGo Instant Answers.</p>
         </div>
       </div>
     </div>
 
     <!-- Files -->
-    <div class="window" id="win-files">
+    <div class="window" id="win-files" data-app-id="files">
       <div class="window-titlebar">
         <span class="window-title">Files</span>
         <div class="window-buttons">
@@ -200,7 +189,7 @@
     </div>
 
     <!-- Terminal -->
-    <div class="window" id="win-terminal">
+    <div class="window" id="win-terminal" data-app-id="terminal">
       <div class="window-titlebar">
         <span class="window-title">Terminal</span>
         <div class="window-buttons">
@@ -219,7 +208,7 @@
     </div>
 
     <!-- About -->
-    <div class="window" id="win-about">
+    <div class="window" id="win-about" data-app-id="about">
       <div class="window-titlebar">
         <span class="window-title">About NamixOS</span>
         <div class="window-buttons">
@@ -236,7 +225,7 @@
     </div>
 
     <!-- Settings -->
-    <div class="window" id="win-settings">
+    <div class="window" id="win-settings" data-app-id="settings">
       <div class="window-titlebar">
         <span class="window-title">Settings</span>
         <div class="window-buttons">
@@ -276,7 +265,7 @@
 
   </div>
 
-  <script src="apps.js?v=10" defer></script>
-  <script src="script.js?v=10" defer></script>
+  <script src="apps.js?v=30" defer></script>
+  <script src="script.js?v=30" defer></script>
 </body>
 </html>
