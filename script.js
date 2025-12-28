@@ -27,12 +27,10 @@ const ctxButtons = document.querySelectorAll(".ctx-btn");
 let zIndexCounter = 500;
 let isInStandby = false;
 
-/* Stato app: open/hidden per dock recent */
-const appState = {}; // { appId: { open: bool, hidden: bool } }
-const recentApps = []; // max 2
-
-/* Contesto corrente per il context menu */
-let ctxTarget = null; // { type, appId, windowId }
+/* Stato app */
+const appState = {};
+const recentApps = [];
+let ctxTarget = null;
 
 /* ===========================
    UTILS
@@ -122,7 +120,7 @@ function addToTaskbar(winId) {
   const win = document.getElementById(winId);
   if (!win) return;
 
-  const appId = getAppIdFromWindow(win) || winId.replace("win-", "");
+  const appId = getAppIdFromWindow(win);
 
   const item = document.createElement("div");
   item.className = "taskbar-item";
@@ -151,30 +149,24 @@ function removeFromTaskbar(winId) {
 }
 
 /* ===========================
-   DOCK RECENT APPS
+   DOCK RECENT
 =========================== */
 function addRecentApp(appId) {
   ensureAppState(appId);
 
   const index = recentApps.indexOf(appId);
-  if (index !== -1) {
-    recentApps.splice(index, 1);
-  }
+  if (index !== -1) recentApps.splice(index, 1);
+
   recentApps.unshift(appId);
-  if (recentApps.length > 2) {
-    recentApps.pop();
-  }
+  if (recentApps.length > 2) recentApps.pop();
 }
 
 function removeFromRecent(appId) {
   const index = recentApps.indexOf(appId);
-  if (index !== -1) {
-    recentApps.splice(index, 1);
-  }
+  if (index !== -1) recentApps.splice(index, 1);
 }
 
 function renderDockRecent() {
-  if (!dockRecent) return;
   dockRecent.innerHTML = "";
 
   if (recentApps.length === 0) {
@@ -189,15 +181,16 @@ function renderDockRecent() {
     btn.className = "dock-recent-item";
     btn.dataset.appId = appId;
 
-    let icon = "📦";
-    if (appId === "browser") icon = "🌐";
-    if (appId === "files") icon = "🗂️";
-    if (appId === "terminal") icon = ">";
-    if (appId === "settings") icon = "⚙️";
-    if (appId === "notes") icon = "📝";
-    if (appId === "about") icon = "🖥️";
+    const icons = {
+      browser: "🌐",
+      files: "🗂️",
+      terminal: ">_",
+      settings: "⚙️",
+      notes: "📝",
+      about: "🖥️"
+    };
 
-    btn.textContent = icon;
+    btn.textContent = icons[appId] || "📦";
 
     ensureAppState(appId);
     if (appState[appId].open && appState[appId].hidden) {
@@ -208,8 +201,7 @@ function renderDockRecent() {
 
     btn.addEventListener("click", () => {
       const win = getWindowByAppId(appId);
-      if (!win) return;
-      openWindow(win.id);
+      if (win) openWindow(win.id);
     });
 
     const win = getWindowByAppId(appId);
@@ -229,20 +221,14 @@ function renderDockRecent() {
 icons.forEach(icon => {
   const winId = icon.dataset.window;
   const appId = icon.dataset.appId;
-  if (!winId) return;
 
   icon.addEventListener("dblclick", () => openWindow(winId));
 
-  // Su mobile singolo tap apre
   icon.addEventListener("click", () => {
     if (window.innerWidth <= 700) openWindow(winId);
   });
 
-  attachContextMenuHandlers(icon, {
-    type: "desktop-icon",
-    appId,
-    windowId: winId
-  });
+  attachContextMenuHandlers(icon, { type: "desktop-icon", appId, windowId: winId });
 });
 
 dockItems.forEach(btn => {
@@ -251,11 +237,7 @@ dockItems.forEach(btn => {
 
   btn.addEventListener("click", () => openWindow(winId));
 
-  attachContextMenuHandlers(btn, {
-    type: "dock-main",
-    appId,
-    windowId: winId
-  });
+  attachContextMenuHandlers(btn, { type: "dock-main", appId, windowId: winId });
 });
 
 /* ===========================
@@ -291,7 +273,6 @@ windowsEls.forEach(win => {
   if (btnMin) btnMin.addEventListener("click", () => minimizeWindow(win));
   if (btnFull) btnFull.addEventListener("click", () => win.classList.toggle("fullscreen"));
 
-  // Drag
   let dragging = false;
   let offsetX = 0;
   let offsetY = 0;
@@ -311,16 +292,10 @@ windowsEls.forEach(win => {
     win.style.top = e.clientY - offsetY + "px";
   });
 
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-  });
+  document.addEventListener("mouseup", () => dragging = false);
 
   const appId = getAppIdFromWindow(win);
-  attachContextMenuHandlers(win, {
-    type: "window",
-    appId,
-    windowId: win.id
-  });
+  attachContextMenuHandlers(win, { type: "window", appId, windowId: win.id });
 });
 
 /* ===========================
@@ -366,7 +341,7 @@ function showBlack(icon, duration, callback) {
 }
 
 function enterStandby() {
-  windowsEls.forEach(w => (w.style.display = "none"));
+  windowsEls.forEach(w => w.style.display = "none");
 
   showBlack("⏸", 1500, () => {
     standbyOverlay.style.display = "flex";
@@ -382,17 +357,13 @@ function wakeFromStandby() {
   standbyOverlay.style.display = "none";
   isInStandby = false;
 
-  showBlack("⏸", 1500, () => {
-    playSplash(() => {});
-  });
+  showBlack("⏸", 1500, () => playSplash(() => {}));
 }
 
 standbyOverlay.addEventListener("click", wakeFromStandby);
 
 function enterReboot() {
-  windowsEls.forEach(w => {
-    w.style.display = "none";
-  });
+  windowsEls.forEach(w => w.style.display = "none");
 
   for (const appId in appState) {
     appState[appId].open = false;
@@ -402,9 +373,7 @@ function enterReboot() {
   renderDockRecent();
   taskbarContainer.innerHTML = "";
 
-  showBlack("🔄", 3000, () => {
-    playSplash(() => {});
-  });
+  showBlack("🔄", 3000, () => playSplash(() => {}));
 }
 
 startPowerButtons.forEach(btn => {
@@ -428,7 +397,7 @@ function mobileMode() {
 window.addEventListener("resize", mobileMode);
 
 /* ===========================
-   CONTEXT MENU
+   CONTEXT MENU (VERSIONE iPHONE 12)
 =========================== */
 function showContextMenu(x, y, meta) {
   ctxTarget = meta;
@@ -457,47 +426,84 @@ function hideContextMenu() {
 function attachContextMenuHandlers(element, meta) {
   if (!element) return;
 
-  // desktop: right-click
+  function isVisible(el) {
+    const rect = el.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  }
+
+  function isCovered(el) {
+    const rect = el.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+    const topEl = document.elementFromPoint(x, y);
+    return topEl && topEl !== el && !el.contains(topEl);
+  }
+
+  function canShowMenu(el) {
+    return isVisible(el) && !isCovered(el);
+  }
+
+  /* DESKTOP */
   element.addEventListener("contextmenu", e => {
     e.preventDefault();
-    e.stopPropagation();
-    showContextMenu(e.clientX, e.clientY, meta);
-  });
-
-  // mobile: long press
-  let lastTapTime = 0;
-
-element.addEventListener("touchstart", e => {
-  const now = Date.now();
-  const delta = now - lastTapTime;
-  lastTapTime = now;
-
-  if (delta < 400) {
-    const touch = e.touches[0];
     if (canShowMenu(element)) {
-      showContextMenu(touch.clientX, touch.clientY, meta);
+      showContextMenu(e.clientX, e.clientY, meta);
+      navigator.vibrate?.(10);
     }
-  }
-});
-
-  element.addEventListener("touchend", () => {
-    clearTimeout(touchTimer);
   });
 
-  element.addEventListener("touchmove", () => {
-    clearTimeout(touchTimer);
+  /* MOBILE */
+  let tapCount = 0;
+  let tapTimer = null;
+  let startX = 0;
+  let startY = 0;
+
+  element.addEventListener("touchstart", e => {
+    const touch = e.touches[0];
+    startX = touch.clientX;
+    startY = touch.clientY;
+
+    tapCount++;
+
+    if (tapCount === 1) {
+      tapTimer = setTimeout(() => {
+        if (tapCount === 1) {
+          const dx = Math.abs(touch.clientX - startX);
+          const dy = Math.abs(touch.clientY - startY);
+
+          if (dx < 15 && dy < 15 && canShowMenu(element)) {
+            showContextMenu(touch.clientX, touch.clientY, meta);
+            navigator.vibrate?.(10);
+          }
+        }
+        tapCount = 0;
+      }, 500);
+    }
+
+    if (tapCount === 2) {
+      clearTimeout(tapTimer);
+      tapCount = 0;
+      if (meta.windowId) openWindow(meta.windowId);
+    }
   });
+
+  element.addEventListener("touchmove", e => {
+    const touch = e.touches[0];
+    const dx = Math.abs(touch.clientX - startX);
+    const dy = Math.abs(touch.clientY - startY);
+
+    if (dx > 15 || dy > 15) {
+      clearTimeout(tapTimer);
+      tapCount = 0;
+    }
+  });
+
+  element.addEventListener("touchend", () => {});
 }
 
-document.addEventListener("click", () => {
-  hideContextMenu();
-});
+document.addEventListener("click", () => hideContextMenu());
+document.addEventListener("scroll", () => hideContextMenu());
 
-document.addEventListener("scroll", () => {
-  hideContextMenu();
-});
-
-/* Azioni context menu */
 ctxButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     if (!ctxTarget) return;
@@ -505,24 +511,13 @@ ctxButtons.forEach(btn => {
     const { appId, windowId } = ctxTarget;
 
     let win = null;
-    if (windowId) {
-      win = document.getElementById(windowId);
-    }
-    if (!win && appId) {
-      win = getWindowByAppId(appId);
-    }
-    if (!win) {
-      hideContextMenu();
-      return;
-    }
+    if (windowId) win = document.getElementById(windowId);
+    if (!win && appId) win = getWindowByAppId(appId);
+    if (!win) return;
 
-    if (action === "open") {
-      openWindow(win.id);
-    } else if (action === "hide") {
-      minimizeWindow(win);
-    } else if (action === "close") {
-      closeWindow(win);
-    }
+    if (action === "open") openWindow(win.id);
+    if (action === "hide") minimizeWindow(win);
+    if (action === "close") closeWindow(win);
 
     hideContextMenu();
   });
@@ -533,7 +528,7 @@ ctxButtons.forEach(btn => {
 =========================== */
 function applySavedWallpaper() {
   const saved = localStorage.getItem("namixos_wallpaper");
-  if (!saved) return; // usa quello di default da CSS
+  if (!saved) return;
 
   try {
     const data = JSON.parse(saved);
@@ -542,9 +537,7 @@ function applySavedWallpaper() {
     } else if (data.type === "image") {
       desktop.style.background = `url(${data.value}) center/cover no-repeat`;
     }
-  } catch (e) {
-    console.warn("Invalid wallpaper data");
-  }
+  } catch (e) {}
 }
 
 /* ===========================
