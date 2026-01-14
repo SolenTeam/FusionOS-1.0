@@ -2,24 +2,247 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>NamixOS</title>
+  <title>FusionOS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="icon.png">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-  <div class="desktop">
-    <div class="window">
-      <div class="titlebar">NamixOS — Home</div>
-      <div class="content">
-        <h1>Welcome to FuSion</h1>
-        <p>The experimental web‑based operating system by SolenTeam. The files are temporarily down and we are going to fix them in the next update.</p>
-      </div>
+  <!-- Splash screen -->
+  <div id="splash">
+    <div class="splash-logo">FusionOS</div>
+  </div>
+
+  <!-- Black screen (standby/reboot transition) -->
+  <div id="black-screen">
+    <div id="black-icon">⏸</div>
+  </div>
+
+  <!-- Standby overlay -->
+  <div id="standby-message">
+    <div class="standby-box">
+      <div class="standby-title">Standby</div>
+      <div class="standby-subtitle">Tap or click to wake FusionOS</div>
     </div>
   </div>
 
+  <!-- Desktop -->
+  <div id="desktop">
+
+    <!-- Top bar -->
+    <div id="topbar">
+      <button id="start-button" class="start-btn">Fusion</button>
+      <div id="clock">--:--</div>
+    </div>
+
+    <!-- Desktop icons -->
+    <div id="desktop-icons">
+
+      <div class="icon" data-window="win-notes" data-app-id="notes">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">📝</div>
+        <div class="icon-label">Notes</div>
+      </div>
+
+      <div class="icon" data-window="win-browser" data-app-id="browser">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">🌐</div>
+        <div class="icon-label">FusiOnline</div>
+      </div>
+
+      <div class="icon" data-window="win-files" data-app-id="files">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">🗂️</div>
+        <div class="icon-label">Files</div>
+      </div>
+
+      <div class="icon" data-window="win-terminal" data-app-id="terminal">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">>_</div>
+        <div class="icon-label">Terminal</div>
+      </div>
+
+      <div class="icon" data-window="win-about" data-app-id="about">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">🖥️</div>
+        <div class="icon-label">About</div>
+      </div>
+
+      <div class="icon" data-window="win-settings" data-app-id="settings">
+        <div class="icon-menu-btn">⋯</div>
+        <div class="icon-image">⚙️</div>
+        <div class="icon-label">Settings</div>
+      </div>
+
+    </div>
+
+    <!-- WINDOWS -->
+
+    <!-- Notes -->
+    <div id="win-notes" class="window" data-app-id="notes">
+      <div class="window-titlebar">
+        <div class="window-title">Notes</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <textarea class="notes-editor" placeholder="Write your notes here..."></textarea>
+      </div>
+    </div>
+
+    <!-- Browser -->
+    <div id="win-browser" class="window" data-app-id="browser">
+      <div class="window-titlebar">
+        <div class="window-title">FusiOnline</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="browser-bar">
+          <input type="text" class="browser-url" placeholder="Search with FusiOnline...">
+        </div>
+        <div class="browser-view">Welcome to FusiOnline.</div>
+      </div>
+    </div>
+
+    <!-- Files -->
+    <div id="win-files" class="window" data-app-id="files">
+      <div class="window-titlebar">
+        <div class="window-title">Files</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="fm-sidebar">
+          <button class="fm-nav-item" data-path="home">Home</button>
+          <button class="fm-nav-item" data-path="documents">Documents</button>
+          <button class="fm-nav-item" data-path="music">Music</button>
+        </div>
+        <div class="fm-main">
+          <div id="fm-path">home</div>
+          <div id="fm-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div id="win-terminal" class="window" data-app-id="terminal">
+      <div class="window-titlebar">
+        <div class="window-title">Terminal</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content terminal-content">
+        <div id="terminal-output" class="terminal-output">FusionOS Terminal\nType "help" for commands.</div>
+        <div class="terminal-input-row">
+          <span>&gt;</span>
+          <input type="text" class="terminal-input">
+        </div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div id="win-about" class="window" data-app-id="about">
+      <div class="window-titlebar">
+        <div class="window-title">About FusionOS</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <p class="about-text">
+          FusionOS is a web‑based experimental desktop by SolenTeam.
+        </p>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="win-settings" class="window" data-app-id="settings">
+      <div class="window-titlebar">
+        <div class="window-title">Settings</div>
+        <div class="window-controls">
+          <button class="btn-minimize">—</button>
+          <button class="btn-fullscreen">⛶</button>
+          <button class="btn-close">✕</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <h2>Wallpaper</h2>
+        <div id="wallpaper-grid"></div>
+      </div>
+    </div>
+
+    <!-- Dock -->
+    <div id="dock">
+      <div id="dock-main">
+        <button class="dock-item" data-window="win-notes" data-app-id="notes">📝</button>
+        <button class="dock-item" data-window="win-browser" data-app-id="browser">🌐</button>
+        <button class="dock-item" data-window="win-files" data-app-id="files">🗂️</button>
+        <button class="dock-item" data-window="win-terminal" data-app-id="terminal">&gt;_</button>
+        <button class="dock-item" data-window="win-about" data-app-id="about">🖥️</button>
+        <button class="dock-item" data-window="win-settings" data-app-id="settings">⚙️</button>
+      </div>
+      <div id="dock-divider"></div>
+      <div id="dock-recent"></div>
+    </div>
+
+    <!-- Taskbar -->
+    <div id="taskbar">
+      <div id="taskbar-apps"></div>
+    </div>
+
+    <!-- Start menu -->
+    <div id="start-menu">
+      <div class="start-section">
+        <div class="start-section-title">Apps</div>
+        <button class="start-app" data-window="win-notes">Notes</button>
+        <button class="start-app" data-window="win-browser">FusiOnline</button>
+        <button class="start-app" data-window="win-files">Files</button>
+        <button class="start-app" data-window="win-terminal">Terminal</button>
+        <button class="start-app" data-window="win-about">About</button>
+        <button class="start-app" data-window="win-settings">Settings</button>
+      </div>
+      <div class="start-section start-section-bottom">
+        <button class="start-power" data-action="standby">Standby</button>
+        <button class="start-power" data-action="reboot">Reboot</button>
+      </div>
+    </div>
+
+    <!-- Context menu -->
+    <div id="context-menu">
+      <button class="ctx-btn" data-action="open">
+        <span class="ctx-icon">▶️</span>
+        <span class="ctx-text">Open</span>
+      </button>
+      <button class="ctx-btn" data-action="open-silently">
+        <span class="ctx-icon icon-eye">👁️</span>
+        <span class="ctx-icon icon-x">❌</span>
+        <span class="ctx-text">Open Silently</span>
+      </button>
+      <button class="ctx-btn" data-action="close">
+        <span class="ctx-icon">❌</span>
+        <span class="ctx-text">Close</span>
+      </button>
+    </div>
+
+  </div>
+
+  <script src="apps.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
