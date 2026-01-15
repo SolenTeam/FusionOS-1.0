@@ -402,30 +402,6 @@ window.addEventListener("resize", mobileMode);
 /* ===========================
    CONTEXT MENU
 =========================== */
-function showContextMenu(x, y, meta) {
-  ctxTarget = meta;
-  contextMenu.style.display = "flex";
-
-  const menuRect = contextMenu.getBoundingClientRect();
-  let posX = x;
-  let posY = y;
-
-  if (posX + menuRect.width > window.innerWidth) {
-    posX = window.innerWidth - menuRect.width - 5;
-  }
-  if (posY + menuRect.height > window.innerHeight) {
-    posY = window.innerHeight - menuRect.height - 5;
-  }
-
-  contextMenu.style.left = posX + "px";
-  contextMenu.style.top = posY + "px";
-}
-
-function hideContextMenu() {
-  contextMenu.style.display = "none";
-  ctxTarget = null;
-}
-
 function attachContextMenuHandlers(element, meta) {
   if (!element) return;
 
@@ -504,32 +480,6 @@ function attachContextMenuHandlers(element, meta) {
 
   element.addEventListener("touchend", () => {});
 }
-
-document.addEventListener("click", e => {
-  if(!contextMenu.contains(e.target)) {
-    hideContextMenu();
-  }
-  });
-document.addEventListener("scroll", () => hideContextMenu());
-
-ctxButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    if (!ctxTarget) return;
-    const action = btn.dataset.action;
-    const { appId, windowId } = ctxTarget;
-
-    let win = null;
-    if (windowId) win = document.getElementById(windowId);
-    if (!win && appId) win = getWindowByAppId(appId);
-    if (!win) return;
-
-    if (action === "open") openWindow(win.id);
-    if (action === "hide") minimizeWindow(win);
-    if (action === "close") closeWindow(win);
-
-    hideContextMenu();
-  });
-});
 
 /* ===========================
    WALLPAPER FROM LOCALSTORAGE
