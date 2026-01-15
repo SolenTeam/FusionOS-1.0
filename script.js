@@ -508,6 +508,7 @@ function attachContextMenuHandlers(element, meta) {
 document.addEventListener("click", e => {
   if(!contextMenu.contains(e.target)) {
     hideContextMenu();
+  }
   });
 document.addEventListener("scroll", () => hideContextMenu());
 
